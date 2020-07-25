@@ -56,7 +56,7 @@
   (let [[a b c fnlist] sexpr
         ;retmap (last fnlist)
         lastfnform (last fnlist)
-        _          (println "lastfn: " lastfnform)
+        ;_          (println "lastfn: " lastfnform)
         retmap     (if (map? lastfnform)
                      lastfnform
                      (if (and (sequential? lastfnform)
@@ -91,7 +91,7 @@
        ; else, recurse thru remaining args
        (let [retval (for [s (drop 1 sexpr)]
                       (find-dispatches s events))]
-         (println "    returned: " retval)
+         ;(println "    returned: " retval)
          ; flatten
          (remove nil? (flatten (concat retval events)))))))
   ; wrap it in a 'do expression, and call with starting state
@@ -120,16 +120,26 @@
                                      (drop 2)))
          ds1      (find-dispatches doexpr [])
          ds2      (extract-fx sexpr)
-         _        (println "ds1: " ds1)
-         _        (println "ds2: " ds2)
-         combined (concat ds1 ds2)
-         _        (println "combined: " combined)]
+         combined (concat ds1 ds2)]
+         ;_        (println "ds1: " ds1)
+         ;_        (println "ds2: " ds2)
+         ;_        (println "combined: " combined)]
      combined)))
 
 
+(>defn gen-events
+  [] [=> sequential?]
+  (let [code  (read-forms (slurp infile))
+        forms (filter re-frame-form? code)
+        dag   (map vector
+                   (map re-frame-form-name forms)
+                   (map find-dispatches forms))]
+    dag))
 
 
 (comment
+
+  (gen-events)
 
   (def code (read-forms (slurp infile)))
   (count code)
@@ -155,6 +165,8 @@
   (->> code
        (filter re-frame-form?)
        (map find-dispatches))
+
+
 
   (fn-name (nth code 3))
   (-> code
