@@ -1,0 +1,3 @@
+Mac
+
+- brew install graphviz

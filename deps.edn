@@ -1,7 +1,8 @@
 {:paths ["src"]
  :jvm-opts ["-Dguardrails.enabled"]
  :deps  {org.clojure/core.match {:mvn/version "1.0.0"}
-         com.fulcrologic/guardrails {:mvn/version "0.0.12"}}
+         com.fulcrologic/guardrails {:mvn/version "0.0.12"}
+         ubergraph {:mvn/version "0.8.2"}}
  :aliases
         {:rebl
          {:extra-deps {com.cognitect/rebl          {:local/root "REBL-0.9.226/openjfx15ea"}
