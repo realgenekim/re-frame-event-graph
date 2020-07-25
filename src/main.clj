@@ -57,15 +57,17 @@
         ;retmap (last fnlist)
         lastfnform (last fnlist)
         ;_          (println "lastfn: " lastfnform)
+                    ; we find the {:dispatch ...} as the last element
         retmap     (if (map? lastfnform)
                      lastfnform
+                     ; otherwise, if it's a (let [] ...), look for the last form in there
                      (if (and (sequential? lastfnform)
                               (= 'let (first lastfnform)))
                        (last lastfnform)))
         ;_          (println "retmap: " retmap)
         retv       (if (:dispatch retmap)
-                     (:dispatch retmap)
-                     (flatten (:dispatch-n retmap)))]
+                     [(:dispatch retmap)]
+                     (:dispatch-n retmap))]
     (if (or (not (sequential? retv))
             (empty? retv))
       nil
@@ -79,21 +81,28 @@
    ;(println sexpr)
    ;(println "walk: " sexpr)
    ;(println "===" (type sexpr))
+
    ; if (op arg1 args) (i.e., a list), check to see if it's re-frame
    ;   otherwise, recurse
    (if (or (seq? sexpr)
            (list? sexpr)
            (vector? sexpr))
+     ; if (re-frame/dispatch) is called, then return [:event :args...]
      (if (= 're-frame/dispatch (first sexpr))
        (do
-         ;(println "==== reframe! " (second sexpr))
-         (second sexpr))
+         (println "==== reframe! " (second sexpr))
+         (rest sexpr))
        ; else, recurse thru remaining args
-       (let [retval (for [s (drop 1 sexpr)]
-                      (find-dispatches s events))]
-         ;(println "    returned: " retval)
-         ; flatten
-         (remove nil? (flatten (concat retval events)))))))
+       (let [retval    (for [s (drop 1 sexpr)]
+                         (find-dispatches s events))
+             ; flatten
+             flattened (->> (concat retval events)
+                            (remove nil?)
+                            (remove empty?)
+                            (mapcat identity))
+             _         (println "    flattened: " retval)]
+         flattened))))
+
   ; wrap it in a 'do expression, and call with starting state
   ;
   ; 0: (re-frame/reg-event-fx

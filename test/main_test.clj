@@ -17,19 +17,23 @@
 (deftest rf1
   (testing "rf1"
     (let [c1 "(re-frame/reg-event-db _ _ (fn[x]  (re-frame/dispatch [:test1])))"]
-      (is (= (m/find-dispatches (read-string c1))
-             [:test1])))
+      (is (= [[:test1]]
+             (m/find-dispatches (read-string c1)))))
+
     (let [c1 "(re-frame/reg-event-db _ _ (fn[x]  (do (re-frame/dispatch [:test1]))))"]
-      (is (= (m/find-dispatches (read-string c1))
-             [:test1]))))
+      (is (= [[:test1]]
+             (m/find-dispatches (read-string c1))))))
+
   (testing "rf3"
     (let [c1 "(re-frame/reg-event-fx _ _ (fn[x] {:db 123 :dispatch [:test1]}))"]
-      (is (= (m/extract-fx (read-string c1))
-             [:test1]))))
+      (is (= [[:test1]]
+             (m/extract-fx (read-string c1))))))
+
   (testing "rf4"
     (let [c1 "(re-frame/reg-event-fx _ _ (fn[x] {:db 123 :dispatch-n [[:test2][:test1]]}))"]
-      (is (= (m/extract-fx (read-string c1))
-             [:test2 :test1])))))
+      (is (= [[:test2] [:test1]]
+             (m/extract-fx (read-string c1)))))))
+
 
 
 (def code1 "(re-frame/reg-event-db\n  ::iphone-rewrite-desc-twitter-call-oembed-all-cards\n  [check-spec-interceptor]\n  (fn [db [_ _]]\n    (println \"::iphone-rewrite-desc-twitter-call-oembed-all-cards: \")\n    (let [iphone-state (:iphone-state-and-view db)\n          nperpage     (:cards-per-page iphone-state)\n          pagenum      (:page-num iphone-state)\n          startingcard (* pagenum nperpage)]\n      ; only call oembed on the cards on the curent page\n      (println \"::iphone-rewrite-desc-twitter-call-oembed-all-cards: iphone state: \" iphone-state)\n      (doseq [n (range startingcard\n                       (+ startingcard nperpage))]\n        (println \"::iphone-rewrite-desc-twitter-call-oembed-all-cards: n: \" n)\n        (re-frame/dispatch [::rewrite-desc-twitter-call-oembed n])))\n    db))")
@@ -40,28 +44,33 @@
 (deftest rf-export
   (testing "code1"
     (let [retval (m/find-dispatches (read-string code1))]
-      (is (= (first retval)
-             :user/rewrite-desc-twitter-call-oembed))))
+      (is (= :user/rewrite-desc-twitter-call-oembed
+             (ffirst retval)))))
+
   (testing "code2"
     (let [retval (m/find-dispatches (read-string code2))]
-      (is (= (first retval)
-             :user/callback-handle-twitter-oembed))))
+      (is (= :user/callback-handle-twitter-oembed
+             (ffirst retval)))))
+
   (testing "code3"
     (let [retval (m/find-dispatches (read-string code3))]
-      (is (= retval
-             [:user/generate-materialized-cards
-              :user/load-card-comments-attachments
-              :user/load-list-card-counts]))
+      (is (= [[:user/generate-materialized-cards]
+              [:user/load-card-comments-attachments]
+              [:user/load-list-card-counts]]
+             retval))
+
       (is (= (m/extract-fx (read-string code3))
              nil))))
   (testing "code4"
     (let [retval (m/find-dispatches (read-string code4))]
-      (is (= retval
-             [:user/reset-card
-              :user/load-card-comments-attachments
-              :user/generate-materialized-cards]))
-      (is (= (m/extract-fx (read-string code4))
-             [:user/reset-card
-              :user/load-card-comments-attachments
-              :user/generate-materialized-cards])))))
+      (is (= [[:user/reset-card]
+              [:user/load-card-comments-attachments]
+              [:user/generate-materialized-cards]]
+             retval))
+
+      (is (= [[:user/reset-card]
+              [:user/load-card-comments-attachments]
+              [:user/generate-materialized-cards]]
+             (m/extract-fx (read-string code4)))))))
+
 
