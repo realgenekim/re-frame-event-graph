@@ -35,6 +35,26 @@
   [sexpr]
   (second sexpr))
 
+(defn db-or-fx?
+  " eval first form: so that we can extract ending map from -fx "
+  [sexpr]
+  (println sexpr)
+  (condp = (first sexpr)
+    're-frame/reg-event-db :db
+    're-frame/reg-event-fx :fx
+    nil))
+
+(defn extract-fx [sexpr]
+  " get :dispatch or :dispach-n from last form "
+  (println sexpr)
+  (let [[a b c fnlist] sexpr
+        retmap (last fnlist)
+        _ (println retmap)]
+    (if (:dispatch retmap)
+      [(:dispatch retmap)]
+      (:dispatch-n retmap))))
+
+
 ; 0: (re-frame/reg-event-fx
 ; 1:  ::load-initial-state-success
 ; 2:  [check-spec-interceptor]
