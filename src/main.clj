@@ -2,7 +2,13 @@
   (:require
     [clojure.edn :as edn]
     [clojure.walk :as w]
-    [clojure.core.match :as m]))
+    [clojure.core.match :as m]
+    [clojure.spec.alpha :as s]
+    [com.fulcrologic.guardrails.core :refer [>defn >def | ? =>]]))
+
+(>defn test-guardrails
+  [i] [integer? => nil?]
+  1)
 
 (def infile "/Users/genekim/src.local/trello-workflow/src/cljs/trello_workflow/events.cljs")
 
@@ -60,14 +66,16 @@
         retv       (if (:dispatch retmap)
                      (:dispatch retmap)
                      (flatten (:dispatch-n retmap)))]
-    (if (empty? retv)
+    (if (or (not (sequential? retv))
+            (empty? retv))
       nil
       retv)))
 
 
-(defn find-dispatches
+(>defn find-dispatches
   ;" accumulate all events "
   ([sexpr events]
+   [any? vector? => (s/nilable seq?)]
    ;(println sexpr)
    ;(println "walk: " sexpr)
    ;(println "===" (type sexpr))
@@ -84,7 +92,8 @@
        (let [retval (for [s (drop 1 sexpr)]
                       (find-dispatches s events))]
          (println "    returned: " retval)
-         (mapcat identity (concat retval events))))))
+         ; flatten
+         (remove nil? (flatten (concat retval events)))))))
   ; wrap it in a 'do expression, and call with starting state
   ;
   ; 0: (re-frame/reg-event-fx
@@ -101,6 +110,7 @@
   ;      {:dispatch [::server-load-hotkeys]
   ;       :db (assoc db :session {:username username :fullname fullname})})))
   ([sexpr]
+   [sequential? => (s/nilable seq?)]
    (println "name: " (second sexpr))
    (let [doexpr   (concat ['do] (->> sexpr
                                      ; drop 3 lines: everything but the (fn) sexpr
@@ -129,6 +139,8 @@
   (def r2 (nth code 11))
 
   (find-dispatches r2)
+  (nth code 33)
+  (find-dispatches (nth code 33))
 
   (re-frame-form? (nth code 5))
 
