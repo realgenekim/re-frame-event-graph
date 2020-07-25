@@ -56,7 +56,7 @@
                      (if (and (sequential? lastfnform)
                               (= 'let (first lastfnform)))
                        (last lastfnform)))
-        _          (println "retmap: " retmap)
+        ;_          (println "retmap: " retmap)
         retv       (if (:dispatch retmap)
                      (:dispatch retmap)
                      (flatten (:dispatch-n retmap)))]
@@ -78,12 +78,12 @@
            (vector? sexpr))
      (if (= 're-frame/dispatch (first sexpr))
        (do
-         (println "==== reframe! " (second sexpr))
+         ;(println "==== reframe! " (second sexpr))
          (second sexpr))
        ; else, recurse thru remaining args
        (let [retval (for [s (drop 1 sexpr)]
                       (find-dispatches s events))]
-         ;(println "    returned: " retval)
+         (println "    returned: " retval)
          (mapcat identity (concat retval events))))))
   ; wrap it in a 'do expression, and call with starting state
   ;
@@ -136,12 +136,13 @@
   (->> code
        (filter re-frame-form?))
 
+  (def evnames (->> code
+                    (filter re-frame-form?)
+                    (map re-frame-form-name)))
+
   (->> code
        (filter re-frame-form?)
-       (map re-frame-form-name))
-
-  (+ 1 1)
-
+       (map find-dispatches))
 
   (fn-name (nth code 3))
   (-> code
