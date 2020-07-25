@@ -1,5 +1,5 @@
 {:paths ["src"]
- :deps  {}
+ :deps  {org.clojure/core.match {:mvn/version "1.0.0"}}
  :aliases
         {:rebl
          {:extra-deps {com.cognitect/rebl          {:local/root "REBL-0.9.226/openjfx15ea"}
@@ -10,4 +10,11 @@
                        org.openjfx/javafx-swing    {:mvn/version "11.0.1"}
                        org.openjfx/javafx-base     {:mvn/version "11.0.1"}
                        org.openjfx/javafx-web      {:mvn/version "11.0.1"}}
-          :main-opts  ["-m" "cognitect.rebl"]}}}
+          :main-opts  ["-m" "cognitect.rebl"]}
+         :test {:extra-paths ["test"]
+                :extra-deps {lambdaisland/kaocha {:mvn/version "1.0.632"}}
+                :main-opts ["-m" "kaocha.runner"]}
+         :test-default {:extra-paths ["test"]
+                        :extra-deps {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                                                :sha "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
+                        :main-opts ["-m" "cognitect.test-runner"]}}}

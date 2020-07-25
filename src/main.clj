@@ -1,7 +1,8 @@
 (ns main
   (:require
     [clojure.edn :as edn]
-    [clojure.walk :as w]))
+    [clojure.walk :as w]
+    [clojure.core.match :as m]))
 
 (def infile "/Users/genekim/src.local/trello-workflow/src/cljs/trello_workflow/events.cljs")
 
@@ -51,18 +52,31 @@
 (defn find-dispatches
   ;" accumulate all events "
   ([sexpr events]
-   (println sexpr)
-   (println "walk: " sexpr)
-   (println "===" (type sexpr))
-   (if (and (list? sexpr)
-            (= 're-frame/dispatch (first sexpr)))
-     (do
-       (println "==== reframe!")
-       (second sexpr))
-     (for [s sexpr]
-       (find-dispatches s events))))
+   ;(println sexpr)
+   ;(println "walk: " sexpr)
+   ;(println "===" (type sexpr))
+   ; if (op arg1 args) (i.e., a list), check to see if it's re-frame
+   ;   otherwise, recurse
+   (if (seq? sexpr)
+     (if (= 're-frame/dispatch (first sexpr))
+       (do
+         (println "==== reframe! " (second sexpr))
+         (second sexpr))
+       ; else, recurse thru remaining args
+       (let [retval (for [s (drop 1 sexpr)]
+                      (find-dispatches s events))]
+         ;(println "    returned: " retval)
+         (mapcat identity (concat retval events))))))
+   ;(if (and (list? sexpr)
+   ;         (= 're-frame/dispatch (first sexpr)))
+   ;  (do
+   ;    (println "==== reframe!")
+   ;    (second sexpr))
+   ;  (for [s sexpr]
+   ;    (find-dispatches s events))))
   ;" wrap it in a 'do expression, and call with starting state"
   ([sexpr]
+   (println "name: " (second sexpr))
    (let [doexpr (concat ['do] (->> sexpr
                                    ; drop 3 lines: everything but the (fn) sexpr
                                    (drop 3)
@@ -82,6 +96,8 @@
 
   (def r1 (nth code 3))
   (def r2 (nth code 11))
+
+  (find-dispatches r2)
 
   (re-frame-form? (nth code 5))
 
