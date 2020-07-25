@@ -48,33 +48,29 @@
   " get :dispatch or :dispach-n from last form "
   (println sexpr)
   (let [[a b c fnlist] sexpr
-        retmap (last fnlist)
-        _ (println retmap)]
-    (if (:dispatch retmap)
-      [(:dispatch retmap)]
-      (:dispatch-n retmap))))
+        ;retmap (last fnlist)
+        lastfnform (last fnlist)
+        _          (println "lastfn: " lastfnform)
+        retmap     (if (map? lastfnform)
+                     lastfnform
+                     (if (and (sequential? lastfnform)
+                              (= 'let (first lastfnform)))
+                       (last lastfnform)))
+        _          (println "retmap: " retmap)
+        retv       (if (:dispatch retmap)
+                     (:dispatch retmap)
+                     (flatten (:dispatch-n retmap)))]
+    (if (empty? retv)
+      nil
+      retv)))
 
-
-; 0: (re-frame/reg-event-fx
-; 1:  ::load-initial-state-success
-; 2:  [check-spec-interceptor]
-; 3:  (fn [{:keys [db]} [_ ret]]                                ; currstate, and new state
-;    ; returns new card values: replace it in our (::current-list-cards db)
-;    (println "::load-initial-state-success: " ret)
-;    (let [username (:username ret)
-;          fullname (:fullname ret)
-;          _        (println "::load-initial-state-success: " username " " fullname)]
-;      (println "::load-initial-state-success: " username, fullname)
-;      (io/display-notification "got initial state..." :success)
-;      {:dispatch [::server-load-hotkeys]
-;       :db (assoc db :session {:username username :fullname fullname})})))
 
 (defn find-dispatches
   ;" accumulate all events "
   ([sexpr events]
-   (println sexpr)
-   (println "walk: " sexpr)
-   (println "===" (type sexpr))
+   ;(println sexpr)
+   ;(println "walk: " sexpr)
+   ;(println "===" (type sexpr))
    ; if (op arg1 args) (i.e., a list), check to see if it's re-frame
    ;   otherwise, recurse
    (if (or (seq? sexpr)
@@ -89,23 +85,36 @@
                       (find-dispatches s events))]
          ;(println "    returned: " retval)
          (mapcat identity (concat retval events))))))
-   ;(if (and (list? sexpr)
-   ;         (= 're-frame/dispatch (first sexpr)))
-   ;  (do
-   ;    (println "==== reframe!")
-   ;    (second sexpr))
-   ;  (for [s sexpr]
-   ;    (find-dispatches s events))))
-  ;" wrap it in a 'do expression, and call with starting state"
+  ; wrap it in a 'do expression, and call with starting state
+  ;
+  ; 0: (re-frame/reg-event-fx
+  ; 1:  ::load-initial-state-success
+  ; 2:  [check-spec-interceptor]
+  ; 3:  (fn [{:keys [db]} [_ ret]]                                ; currstate, and new state
+  ;    ; returns new card values: replace it in our (::current-list-cards db)
+  ;    (println "::load-initial-state-success: " ret)
+  ;    (let [username (:username ret)
+  ;          fullname (:fullname ret)
+  ;          _        (println "::load-initial-state-success: " username " " fullname)]
+  ;      (println "::load-initial-state-success: " username, fullname)
+  ;      (io/display-notification "got initial state..." :success)
+  ;      {:dispatch [::server-load-hotkeys]
+  ;       :db (assoc db :session {:username username :fullname fullname})})))
   ([sexpr]
    (println "name: " (second sexpr))
-   (let [doexpr (concat ['do] (->> sexpr
-                                   ; drop 3 lines: everything but the (fn) sexpr
-                                   (drop 3)
-                                   ; drop 2 forms: fn [_ _]
-                                   first
-                                   (drop 2)))]
-     (find-dispatches doexpr []))))
+   (let [doexpr   (concat ['do] (->> sexpr
+                                     ; drop 3 lines: everything but the (fn) sexpr
+                                     (drop 3)
+                                     ; drop 2 forms: fn [_ _]
+                                     first
+                                     (drop 2)))
+         ds1      (find-dispatches doexpr [])
+         ds2      (extract-fx sexpr)
+         _        (println "ds1: " ds1)
+         _        (println "ds2: " ds2)
+         combined (concat ds1 ds2)
+         _        (println "combined: " combined)]
+     combined)))
 
 
 
