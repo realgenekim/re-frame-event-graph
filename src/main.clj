@@ -52,12 +52,14 @@
 (defn find-dispatches
   ;" accumulate all events "
   ([sexpr events]
-   ;(println sexpr)
-   ;(println "walk: " sexpr)
-   ;(println "===" (type sexpr))
+   (println sexpr)
+   (println "walk: " sexpr)
+   (println "===" (type sexpr))
    ; if (op arg1 args) (i.e., a list), check to see if it's re-frame
    ;   otherwise, recurse
-   (if (seq? sexpr)
+   (if (or (seq? sexpr)
+           (list? sexpr)
+           (vector? sexpr))
      (if (= 're-frame/dispatch (first sexpr))
        (do
          (println "==== reframe! " (second sexpr))

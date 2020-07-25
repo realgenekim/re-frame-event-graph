@@ -7,3 +7,5 @@ cljtest:
 clj-autotest:
 	clj -A:test --watch
 
+clj-testdefault:
+	clj -A:test-default
