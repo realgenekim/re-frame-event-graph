@@ -2,7 +2,8 @@
   ; ns must be .*-test
   (:require
     [clojure.test :refer :all]
-    [main :as m]))
+    [main :as m]
+    [graph :as g]))
 
 (deftest test1
   (is (= 1 1))
@@ -73,4 +74,7 @@
               [:user/generate-materialized-cards]]
              (m/extract-fx (read-string code4)))))))
 
+(deftest graph
+  (is (= [:a]
+         (g/remove-empty-2nd [:a '()]))))
 
