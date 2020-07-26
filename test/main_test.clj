@@ -75,6 +75,18 @@
              (m/extract-fx (read-string code4)))))))
 
 (deftest graph
-  (is (= [:a]
-         (g/remove-empty-2nd [:a '()]))))
+  (testing "re2"
+    (is (= [:a]
+           (g/remove-empty-2nd [:a '()]))))
+  (testing "ce"
+    (is (= [[:a :b] [:b :c] [:c :d]]
+           (g/connect-edges [[:a] [:b] [:c] [:d]]))))
+  (testing "connect events"
+    (is (= '([:a :b])
+           (g/connect-events [[:a '([:b])]])))
+    (is (= '([:a :b]
+             [:a :c])
+           (g/connect-events [[:a '([:b] [:c])]])))))
+
+
 
