@@ -27,11 +27,11 @@
   (mapcat identity
           (for [es events]
             (do
-              (println "es: " es)
+              ;(println "es: " es)
               (let [[src dests] es]
-                (println "    src: " src)
-                (println "    dests: " dests)
-                (println "    f-dests: " (filter sequential? dests))
+                ;(println "    src: " src)
+                ;(println "    dests: " dests)
+                ;(println "    f-dests: " (filter sequential? dests))
                 (for [d (filter sequential? dests)]
                   [src (first d)]))))))
 
@@ -48,8 +48,8 @@
   (u/viz-graph g)
 
   (def events (->> (m/gen-events)
-                   (map remove-empty-2nd)
-                   (take 10)))
+                   (map remove-empty-2nd)))
+                   ;(take 10)))
 
   (def e (apply u/graph events))
 
@@ -67,10 +67,14 @@
                       (map (fn [x]
                              (conj (apply vector x) {:style :invis}))))))
 
-  (->> events
-       (remove #(not= 2 (count %))))
+  (def e3 (apply u/add-directed-edges e2
+                 (->> events
+                      (remove #(not= 2 (count %)))
+                      connect-events)))
 
-  (u/viz-graph e2 {:layout :dot})
+  (u/viz-graph e3 {:layout :dot})
+  (u/viz-graph e3 {:layout :fdp})
+  (u/viz-graph e3 {:layout :circo})
 
   (u/viz-graph e {:layout :dot
                   :save {:filename "save.dot"
