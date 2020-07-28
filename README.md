@@ -117,6 +117,9 @@ Run in the REPL.  Input file is hardcoded in main.clj.
 This sample file that works is in the resources directory.
 
 
+# Install Instructions
+
+To use the graphviz visualation of graph, you need to install it as per: https://graphviz.org/download/
 
 Mac
 
