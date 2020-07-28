@@ -112,6 +112,19 @@ Run in the REPL.  Input file is hardcoded in main.clj.
 
 ```
 (def infile "/Users/genekim/src.local/trello-workflow/src/cljs/trello_workflow/events.cljs")
+
+(def graph (gen-events infile)
+
+(count graph)
+; 110 forms
+
+([:graph/load-initial-state-success :graph/server-load-hotkeys]
+ [:graph/select-board :graph/save-and-clear-searchbox]
+ [:graph/select-board :graph/load-board-lists]
+ :
+ :
+ :)
+
 ```
 
 This sample file that works is in the resources directory.

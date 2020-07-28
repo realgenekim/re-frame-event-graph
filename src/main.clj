@@ -137,7 +137,7 @@
 
 
 (>defn gen-events
-  [] [=> sequential?]
+  [infile] [=> sequential?]
   (let [code  (read-forms (slurp infile))
         forms (filter re-frame-form? code)
         dag   (map vector
