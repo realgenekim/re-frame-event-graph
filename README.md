@@ -116,6 +116,19 @@ Run in the REPL.  Input file is hardcoded in main.clj.
 
 This sample file that works is in the resources directory.
 
+# Known Problems
+
+- Many.
+
+
+# TODO and Help I'm Looking For
+
+Pull requests welcome.
+
+- write a proper command-line interface to pass in input file as parameter (so you don't have to write it in a REPL)
+- in graph, put back in the event parameters, so you can see the shape of data used as parameters to event
+- parse `:http-xhrio` fx
+
 
 # Install Instructions
 
