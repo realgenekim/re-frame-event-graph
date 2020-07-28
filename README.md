@@ -118,7 +118,9 @@ This sample file that works is in the resources directory.
 
 # Known Problems
 
-- Many.
+There are many.
+
+- The way I pull out the `reg-event-fx` dispatch maps is a hack -- I grab either the last s-expr inside the `fn` or the enclosed `let`.  I don't parse it at all, so if there are variables in there, they're not evaluated/expanded, or anything like that.
 
 
 # TODO and Help I'm Looking For
