@@ -4,14 +4,7 @@
     [ubergraph.core :as u]
     [main :as m]))
 
-(>defn remove-empty-2nd
-  [v] [vector? => vector?]
-  (let [f (first v)
-        r (second v)]
-    (if (or (nil? r)
-            (empty? r))
-      [f]
-      v)))
+
 
 (>defn connect-edges
   "[:a :b :c] => [:a :b] [:b :c]"
@@ -48,7 +41,7 @@
   (u/viz-graph g)
 
   (def events (->> (m/gen-events)
-                   (map remove-empty-2nd)))
+                   (map m/remove-empty-2nd)))
                    ;(take 10)))
 
   (def e (apply u/graph events))

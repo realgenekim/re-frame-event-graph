@@ -135,9 +135,22 @@
          ;_        (println "combined: " combined)]
      combined)))
 
+(>defn remove-empty-2nd
+  " remove any nodes with no edges — no events dispatched from here.
+    used to clean up visual graphs"
+  [v] [vector? => vector?]
+  (let [f (first v)
+        r (second v)]
+    (if (or (nil? r)
+            (empty? r))
+      [f]
+      v)))
+
 
 (>defn gen-events
-  [infile] [=> sequential?]
+  " this is the main function:
+    input is the filename to parse "
+  [infile] [string? => sequential?]
   (let [code  (read-forms (slurp infile))
         forms (filter re-frame-form? code)
         dag   (map vector
@@ -154,6 +167,27 @@
   (count code)
   ; 110 forms
 
+  ; remove nodes w/empty outbound edges
+  (def events (->> (gen-events infile)
+                  (map remove-empty-2nd)))
+
+  ; remove all nodes w/no outbound edges
+  (def ev-edges (->> events
+                     (remove #(= 1 (count %))))))
+
+
+
+(comment
+  ; delete everything below here
+  (def evnames (->> code
+                   (filter re-frame-form?)
+                   (map re-frame-form-name)))
+
+  (->> code
+       (filter re-frame-form?)
+       (map find-dispatches))
+
+
   (def r1 (nth code 3))
   (def r2 (nth code 11))
 
@@ -166,14 +200,6 @@
   ; load all the forms
   (->> code
        (filter re-frame-form?))
-
-  (def evnames (->> code
-                    (filter re-frame-form?)
-                    (map re-frame-form-name)))
-
-  (->> code
-       (filter re-frame-form?)
-       (map find-dispatches))
 
 
 

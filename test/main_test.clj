@@ -77,7 +77,7 @@
 (deftest graph
   (testing "re2"
     (is (= [:a]
-           (g/remove-empty-2nd [:a '()]))))
+           (m/remove-empty-2nd [:a '()]))))
   (testing "ce"
     (is (= [[:a :b] [:b :c] [:c :d]]
            (g/connect-edges [[:a] [:b] [:c] [:d]]))))
