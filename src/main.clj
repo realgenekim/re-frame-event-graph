@@ -168,8 +168,8 @@
   ; 110 forms
 
   ; remove nodes w/empty outbound edges
-  (def events (->> (gen-events infile)
-                  (map remove-empty-2nd)))
+  (def events (->> (gen-events infile)))
+                  ;(map remove-empty-2nd)))
 
   ; remove all nodes w/no outbound edges
   (def ev-edges (->> events
