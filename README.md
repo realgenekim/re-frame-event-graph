@@ -34,58 +34,15 @@ Each vector is the name of the event, followed by all the other events that it d
  [:graph/load-card-comments-attachments :graph/load-card-comments]
  [:graph/load-card-comments-attachments :graph/load-card-attachments]
  [:graph/iphone-materialize-view :graph/iphone-load-card-attachments]
- [:graph/select-list :graph/save-and-clear-searchbox]
- [:graph/select-list :graph/load-list-cards]
- [:graph/select-board-or-list :graph/save-and-clear-searchbox]
- [:graph/callback-load-card-comments :graph/rewrite-desc-twitter-call-oembed]
- [:graph/iphone-rewrite-desc-twitter-call-oembed-all-cards :graph/rewrite-desc-twitter-call-oembed]
- [:graph/rewrite-desc-twitter-call-oembed :graph/callback-handle-twitter-oembed]
- [:graph/next-card :graph/scroll-to-top]
- [:graph/previous-card :graph/scroll-to-top]
- [:graph/goto-top-card :graph/reset-card]
- [:graph/goto-top-card :graph/load-card-comments-attachments]
- [:graph/goto-bottom-card :graph/reset-card]
- [:graph/goto-bottom-card :graph/load-card-comments-attachments]
- [:graph/archive-card :graph/next-card]
- [:graph/callback-archive-card :graph/generate-materialized-cards]
- [:graph/callback-archive-card :graph/load-card-comments-attachments]
- [:graph/callback-archive-card :graph/load-list-card-counts]
- [:graph/left-pane-set-form-text :graph/generate-materialized-cards]
- [:graph/start-move-card :graph/focus-searchbox]
- [:graph/move-card-to-list nil]
- [:graph/move-card-to-list remove]
- [:graph/move-card-success :graph/reset-card]
- [:graph/move-card-success :graph/load-card-comments-attachments]
- [:graph/move-card-success :graph/generate-materialized-cards]
- [:graph/move-opt-number-key :graph/move-card-to-list]
- [:graph/opt-letter-key :graph/execute-hotkey-move]
- [:graph/move-current-card-to-top :graph/move-card-to-top-or-bottom-of-list]
- [:graph/move-current-card-to-bottom :graph/move-card-to-top-or-bottom-of-list]
- [:graph/move-card-to-top-or-bottom-of-list [:graph/move-card-to-list [dest-list-id board-id pos]]]
- [:graph/move-card-to-top-or-bottom-of-list if]
- [:graph/iphone-set-cardpos-for-move :graph/execute-hotkey-move]
- [:graph/iphone-set-cardpos-for-move :graph/iphone-move-card]
- [:graph/iphone-set-cardpos-for-opt-number-key :graph/move-opt-number-key]
- [:graph/iphone-set-cardpos-for-opt-number-key :graph/iphone-move-card]
- [:graph/edit-card-text :graph/focus-edit-card-name]
- [:graph/handle-keyboard-next-prev-list :graph/load-list-cards]
- [:graph/handle-keyboard-move-to-hotkey :graph/focus-hotkeyform]
- [:graph/handle-keyboard-set-move-hotkey :graph/focus-hotkeyform]
- [:graph/handle-keyboard-delete-move-hotkey :graph/focus-hotkeyform]
- [:graph/handle-keyboard-goto-hotkey :graph/focus-hotkeyform]
- [:graph/create-list-success :graph/load-board-lists]
- [:graph/submit-save-hotkey-form :graph/server-save-hotkeys]
- [:graph/submit-delete-hotkey-form :graph/server-save-hotkeys]
- [:graph/submit-goto-hotkey-form :graph/select-board]
- [:graph/submit-goto-hotkey-form :graph/load-list-cards]
- [:graph/execute-hotkey-move :graph/move-card-to-list]
- [:graph/handle-keyboard-repeat-last-command :graph/move-card-to-list]
- [:graph/route-goto-card-id :graph/scroll-to-top]
- [:graph/route-goto-card-id :graph/reset-card])
+ :
+ :
+ :
 
 (count *1)
 => 65
 ```
+
+![Graph rendered in graphviz](save.png)
 
 
 # What I Learned
