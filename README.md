@@ -68,9 +68,11 @@ Here's what this exercise helped me learn for an SPA which I use for Trello card
 Run in the REPL.  Input file is hardcoded in main.clj.
 
 ```
+(in-ns 'graph)
+
 (def infile "/Users/genekim/src.local/trello-workflow/src/cljs/trello_workflow/events.cljs")
 
-(def graph (gen-events infile)
+(def events (->> (m/gen-events infile)))
 
 (count graph)
 ; 110 forms
@@ -81,6 +83,16 @@ Run in the REPL.  Input file is hardcoded in main.clj.
  :
  :
  :)
+
+(def save-graph (create-graph events))
+
+(u/viz-graph save-graph {:layout :dot :rankdir :LR
+                        :save {:filename "save.dot"
+                                :format :dot}})
+
+(u/viz-graph save-graph {:layout :dot :rankdir :LR
+                        :save {:filename "save.png"
+                                :format :png}}))
 
 ```
 
